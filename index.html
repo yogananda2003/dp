@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Divine Planet - Heal & Transform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* CSS Variables for a clean dark/spiritual aesthetic */
+        :root {
+            --primary-bg: #000000;
+            --secondary-bg: #111111;
+            --accent-gold: #FFD700;
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0a0a0;
+            --brand-violet: #9370DB; /* Medium Purple */
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Poppins', sans-serif;
+        }
+
+        /* CRITICAL MOBILE FIXES & Base Styles */
+        * {
+            -webkit-tap-highlight-color: rgba(147, 112, 219, 0.3);
+            -webkit-touch-callout: none;
+            box-sizing: border-box;
+        }
+
+        html { 
+            scroll-behavior: smooth; 
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+        
+        body {
+            background-color: var(--primary-bg); 
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            touch-action: pan-y; /* Allow vertical scrolling */
+        }
+
+        .font-serif { font-family: var(--font-serif); }
+
+        /* Custom utility classes using CSS variables */
+        .text-text-secondary { color: var(--text-secondary); }
+        .text-var-brand-violet { color: var(--brand-violet); }
+        .bg-var-brand-violet { background-color: var(--brand-violet); }
+        .bg-var-accent-gold { background-color: var(--accent-gold); }
+        .text-var-accent-gold { color: var(--accent-gold); }
+
+        /* THREE.js Background Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            background-color: var(--secondary-bg); /* Use secondary-bg for space feel */
+        }
+        
+        /* Fixed Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 5%;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none; /* Default: ignore mouse events */
+            transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+        }
+        
+        header.scrolled {
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            pointer-events: auto; /* Enable mouse events when scrolled */
+        }
+
+        .logo-svg {
+            height: 40px; 
+            width: 180px;
+            pointer-events: auto;
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+         .logo img { 
+            height: 40px; 
+            pointer-events: auto;
+            touch-action: manipulation;
+        }
+
+        .header-cta {
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            touch-action: manipulation;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header-cta:hover,
+        .header-cta:active {
+            background-color: var(--text-primary);
+            color: var(--primary-bg);
+            transform: scale(1.05);
+        }
+
+        /* Logo Page Fixes */
+        #logo-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            overflow-y: auto;
+            background-color: rgba(0,0,0,0.98);
+            z-index: 2000;
+            display: none;
+            padding-top: 80px;
+            padding-bottom: 80px;
+            pointer-events: auto;
+            touch-action: pan-y;
+            transition: opacity 0.3s ease;
+        }
+
+        .logo-symbol-item {
+            border-left: 2px solid var(--brand-violet);
+            padding-left: 1rem;
+        }
+
+        main {
+            position: relative; 
+            width: 100%;
+            min-height: 100vh;
+            z-index: 1;
+            pointer-events: auto;
+            touch-action: pan-y;
+        }
+        
+        #home {
+            padding-top: 120px !important;
+        }
+
+        .scroll-section {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 120px 5%; 
+        }
+        
+        .content-container {
+            max-width: 900px;
+            width: 100%;
+            z-index: 10;
+            padding: 0 5%;
+        }
+
+        /* Enhanced Scroll Reveal Animation */
+        .reveal-element {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s cubic-bezier(0.19, 1, 0.22, 1), transform 1s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .is-visible .reveal-element { opacity: 1; transform: translateY(0); }
+        .is-visible .reveal-element.delay-100 { transition-delay: 100ms; }
+        .is-visible .reveal-element.delay-200 { transition-delay: 200ms; }
+        .is-visible .reveal-element.delay-300 { transition-delay: 300ms; }
+        .is-visible .reveal-element.delay-400 { transition-delay: 400ms; }
+        .is-visible .reveal-element.delay-500 { transition-delay: 500ms; }
+
+        /* Glassmorphism Styles */
+        .glass-card {
+            background: rgba(18, 18, 18, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            touch-action: manipulation;
+        }
+        
+        .testimonial-card {
+            background: rgba(18, 18, 18, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .service-list {
+            height: 100%;
+        }
+        
+        /* Mobile-Optimized Service Details (Accordions) */
+        .service-detail-item {
+            margin: 0;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .service-detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .service-detail-item summary {
+            list-style: none;
+            padding: 0.75rem 0;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            outline: none;
+            touch-action: manipulation;
+            position: relative;
+            z-index: 20;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            pointer-events: auto;
+        }
+
+        .service-detail-item summary:hover,
+        .service-detail-item summary:active,
+        .service-detail-item summary:focus {
+            color: var(--accent-gold);
+            transform: translateX(5px);
+        }
+        
+        .service-detail-item summary::before {
+            content: "▶";
+            color: var(--brand-violet);
+            font-weight: bold;
+            display: inline-block;
+            width: 1.5em;
+            margin-right: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .service-detail-item[open] summary::before {
+            transform: rotate(90deg);
+        }
+        
+        .service-detail-item p {
+            padding: 0.75rem 0 0.75rem 2rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        .service-detail-item[open] summary {
+            color: var(--text-primary);
+        }
+        
+        /* Custom details/summary for Team section */
+        .team-member-details {
+            margin-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1rem;
+        }
+        .team-member-details summary {
+            list-style: none;
+            padding: 0;
+            font-weight: 600;
+            cursor: pointer;
+            touch-action: manipulation;
+            position: relative;
+            z-index: 20;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: color 0.3s ease;
+            color: var(--accent-gold);
+            font-size: 1rem;
+        }
+
+        .team-member-details summary:hover {
+            color: var(--text-primary);
+        }
+
+        .team-member-details summary i {
+            transition: transform 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        .team-member-details[open] summary i {
+            transform: rotate(180deg);
+        }
+
+        /* Chat Widget Styles */
+        #chat-widget {
+            z-index: 10000;
+            pointer-events: auto !important;
+            touch-action: manipulation;
+        }
+
+        #chat-window {
+            height: 550px;
+            width: 350px;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: scale(0.9) translateY(10px);
+            transform-origin: bottom right;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: auto !important;
+            touch-action: pan-y;
+        }
+
+        /* Use JS to control display to enable transition */
+        #chat-window.open {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            display: flex; /* Ensure it is visible */
+        }
+        
+        #chat-window:not(.open) {
+            display: none; /* Hide when not open */
+        }
+
+        #chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--brand-violet) transparent;
+            padding-right: 8px;
+            margin-bottom: 12px;
+            touch-action: pan-y;
+        }
+
+        #chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #chat-messages::-webkit-scrollbar-thumb {
+            background-color: var(--brand-violet);
+            border-radius: 10px;
+        }
+
+        .user-question-bubble {
+            background-color: var(--brand-violet);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px 12px 4px 12px;
+            display: inline-block;
+            max-width: 85%;
+            font-size: 0.9rem;
+            margin-left: auto;
+        }
+
+        .bot-message-bubble {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: var(--text-primary);
+            padding: 12px 16px;
+            border-radius: 12px 12px 12px 4px;
+            display: inline-block;
+            max-width: 85%;
+            font-size: 0.9rem;
+        }
+        
+        .chat-menu-btn {
+            display: block;
+            width: 100%;
+            background-color: rgba(147, 112, 219, 0.2);
+            color: var(--brand-violet);
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 14px 16px;
+            border-radius: 12px;
+            text-align: left;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            touch-action: manipulation;
+            min-height: 48px;
+            pointer-events: auto !important;
+        }
+
+        .chat-menu-btn:hover,
+        .chat-menu-btn:active,
+        .chat-menu-btn:focus {
+            background-color: var(--brand-violet);
+            color: white;
+            transform: scale(1.02);
+        }
+
+        /* CRITICAL MOBILE TOUCH TARGET FIXES */
+        button, a, .clickable {
+            touch-action: manipulation !important;
+            pointer-events: auto !important;
+            min-height: 44px; /* Ensure sufficient tap area */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Enhanced mobile buttons */
+        .mobile-btn {
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            touch-action: manipulation !important;
+            pointer-events: auto !important;
+        }
+
+        .mobile-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            #chat-window {
+                width: 90vw;
+                height: 70vh;
+                max-width: 380px;
+                max-height: 600px;
+                right: 5vw;
+                bottom: 5vw;
+            }
+            
+            .service-detail-item summary {
+                font-size: 1.05rem;
+                padding: 1rem 0;
+            }
+            
+            .header-cta {
+                padding: 10px 20px;
+                font-size: 0.85rem;
+            }
+            
+            .mobile-btn {
+                min-height: 48px;
+                padding: 16px 24px;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+    
+    <!-- LOGO SYMBOLISM PAGE -->
+    <section id="logo-page">
+        <div class="content-container max-w-4xl mx-auto pt-16">
+            <button id="back-to-home" class="text-text-secondary hover:text-white mb-8 flex items-center transition-colors relative z-10 mobile-btn">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Home
+            </button>
+            
+            <h1 class="font-serif text-4xl md:text-5xl font-bold mb-4 text-center">Our Symbol: A Reflection of Universal Truth</h1>
+            <p class="text-text-secondary text-lg mb-12 text-center max-w-2xl mx-auto">
+                The logo for The Divine Planet: Soul Awakening is a powerful visual representation of our core philosophy. Our mission is universally applicable: to guide everyone on the transformative path of Meditation toward harmony, peace, and wellness.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mt-16">
+                <!-- Logo Visual - REPLACED WITH SVG -->
+                
+
+                <!-- Symbolism Breakdown -->
+                <div class="md:col-span-2 space-y-8">
+                    <div class="logo-symbol-item">
+                        <h3 class="font-serif text-2xl font-semibold text-var-accent-gold mb-2">1. The Golden Circle: The Infinite Cosmos </h3>
+                        <p class="text-text-secondary">The outermost Golden Circle represents The Infinite Cosmos and the ultimate reality from which all creation flows. It symbolizes the boundless energy that contains all existence, reminding us that we are all held within this single, eternal whole.</p>
+                    </div>
+
+                    <div class="logo-symbol-item">
+                        <h3 class="font-serif text-2xl font-semibold text-var-brand-violet mb-2">2. The Six-Pointed Star: Divine Union and Balance</h3>
+                        <p class="text-text-secondary">The vibrant six-pointed star at the center is a universal symbol of Divine Union. It signifies the harmonious interweaving of the material and spiritual realms, heaven and earth. This balance is the essence of true holistic wellness.</p>
+                    </div>
+
+                    <div class="logo-symbol-item">
+                        <h3 class="font-serif text-2xl font-semibold text-white mb-2">3. The Central Eye & Crescent: Inner Self and Awareness</h3>
+                        <p class="text-text-secondary">The stylized Eye above a Crescent Moon at the center represents the Inner Self and Consciousness that resides within every individual. The Eye signifies the enlightenment and insight gained through Meditation, while the crescent moon symbolizes growth and the journey of awakening the soul to its full potential.</p>
+                    </div>
+
+                    <div class="logo-symbol-item">
+                        <!-- Renamed from 5 to 4 to match the flow -->
+                        <h3 class="font-serif text-2xl font-semibold text-var-accent-gold mb-4">4. The Name: Divine Planet & Soul Awakening</h3>
+                        <p class="text-text-secondary">Our name affirms that all life is sacred (**Divine Planet**), and its inhabitants are here to realize their true purpose. **Soul Awakening** is our clear mission: to guide you back to your authentic, spiritual self and live in harmony with the universal order, regardless of your background or path.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Six Elements Grid -->
+            <div class="mt-16 pt-8 border-t border-gray-800">
+                <h2 class="font-serif text-3xl font-bold mb-8 text-center">5. The Six Elements: Balancing the Human Experience</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-6 text-center">
+                    <div class="glass-card p-4">
+                        <i class="fas fa-leaf text-2xl text-green-500 mb-2"></i>
+                        <p class="font-sans font-semibold text-white">Leaf: Purity & Growth</p>
+                        <p class="text-xs text-text-secondary">Spiritual integrity, balance, and our connection to Nature.</p>
+                    </div>
+                    <div class="glass-card p-4">
+                        <i class="fas fa-dove text-2xl text-blue-300 mb-2"></i>
+                        <p class="font-sans font-semibold text-white">Bird: Freedom & Peace</p>
+                        <p class="text-xs text-text-secondary">Liberation of the spirit and the transcendence of limiting beliefs.</p>
+                    </div>
+                    <div class="glass-card p-4">
+                        <i class="fas fa-tint text-2xl text-blue-500 mb-2"></i>
+                        <p class="font-sans font-semibold text-white">Water Drop: Flow & Emotion</p>
+                        <p class="text-xs text-text-secondary">Emotional well-being, intuition, and the importance of inner cleansing.</p>
+                    </div>
+                    <div class="glass-card p-4">
+                        <i class="fas fa-dot-circle text-2xl text-red-500 mb-2"></i>
+                        <p class="font-sans font-semibold text-white">Red Dot: Grounding & Stability</p>
+                        <p class="text-xs text-text-secondary">Our physical foundation, stability, and connection to Earth.</p>
+                    </div>
+                    <div class="glass-card p-4">
+                        <i class="fas fa-spinner text-2xl text-purple-400 mb-2"></i>
+                        <p class="font-sans font-semibold text-white">Spiral/Galaxy: Cosmic Energy</p>
+                        <p class="text-xs text-text-secondary">The dynamic, endless transformation and energetic connection to the Universe.</p>
+                    </div>
+                    <div class="glass-card p-4">
+                        <i class="fas fa-infinity text-2xl text-cyan-400 mb-2"></i>
+                        <p class="font-sans font-semibold text-white">Chakra Swirls: Life Force (Prana)</p>
+                        <p class="text-xs text-text-secondary">Inner power, subtle energy, and the vitality within us.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+     <header>
+        <div class="logo">
+             <img src="./imgs/Reiki Logo.png" alt="The Divine Planet Logo">
+        </div>
+        <div class="flex items-center space-x-4">
+            <button id="show-logo-page" class="hidden md:inline-block text-text-secondary hover:text-white transition-colors text-sm relative z-10 mobile-btn">Symbolism</button>
+            <a href="#contact" class="header-cta">Chat on WhatsApp</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- HERO SECTION -->
+        <section class="scroll-section" id="home">
+            <div class="content-container text-left md:text-center text-white md:max-w-4xl">
+                <h1 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 reveal-element">The Divine Planet: Heal & Transform</h1>
+                <p class="text-lg md:text-xl max-w-xl mx-auto text-text-secondary mb-10 reveal-element delay-200 font-sans">Spiritual and energy therapies for balance, clarity, and inner peace.</p>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full md:justify-center reveal-element delay-300">
+                    <a href="https://wa.me/917892112327" target="_blank" class="bg-var-accent-gold text-black font-semibold py-3 px-8 rounded-xl hover:bg-white transition-all duration-300 transform hover:scale-[1.02] font-sans text-center mobile-btn">
+                        Chat on WhatsApp
+                    </a>
+                    <a href="#services" class="bg-transparent border border-white text-white font-semibold py-3 px-8 rounded-xl hover:bg-var-brand-violet transition-all duration-300 transform hover:scale-[1.02] font-sans text-center mobile-btn">
+                        Explore Services
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERVICES SECTION - UPDATED TO ONLY 6 ITEMS -->
+        <section class="scroll-section !min-h-[auto] py-20 md:py-32" id="services">
+            <div class="content-container max-w-xl mx-auto md:max-w-5xl">
+                <h2 class="font-serif text-3xl md:text-4xl font-bold mb-4 reveal-element text-center">Core Healing Modalities</h2>
+                <p class="text-text-secondary text-lg mb-12 reveal-element delay-100 text-center">Focused spiritual, energetic, and lifestyle practices for deep transformation. **Tap/Click the names for details.**</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <!-- ENERGY & DEEP WORK -->
+                    <div class="service-list glass-card p-6 reveal-element delay-200 relative z-20">
+                        <h3 class="font-serif text-xl md:text-2xl text-white mb-3 text-var-brand-violet">Energy & Ancestral Clearing</h3>
+                        <div class="space-y-1">
+                            <details class="service-detail-item">
+                                <summary>Reiki</summary>
+                                <p>A Japanese technique for stress reduction and relaxation that promotes healing by channeling universal life force energy through gentle touch and energetic balancing.</p>
+                            </details>
+                            <details class="service-detail-item">
+                                <summary>Past Life Regression</summary>
+                                <p>A process using hypnosis or deep meditation to safely access memories of previous lives, helping to resolve current-life emotional and behavioral patterns, fears, and blocks.</p>
+                            </details>
+                            
+                            <details class="service-detail-item">
+                                <summary>Spiritual Counselling</summary>
+                                <p>One-on-one sessions offering psychological support and a safe space to process life events, focused through the lens of spiritual integration and personal growth.</p>
+                            </details>
+                        </div>
+                    </div>
+
+                    <!-- LIFESTYLE & INTEGRATION -->
+                    <div class="service-list glass-card p-6 reveal-element delay-300 relative z-20">
+                        <h3 class="font-serif text-xl md:text-2xl text-white mb-3 text-var-brand-violet">Lifestyle & Mind-Body Integration</h3>
+                        <div class="space-y-1">
+                            
+                            <details class="service-detail-item">
+                                <summary>Therapeutic Yoga</summary>
+                                <p>Individualized yoga practice focusing on specific physical or emotional imbalances. Combines gentle movement, breathwork, and meditation for rehabilitation and self-regulation.</p>
+                            </details>
+                            <details class="service-detail-item">
+                                <summary>Nutrition and Diet Guidance</summary>
+                                <p>Personalized consultation on dietary choices and nutrition to support energetic vitality, mental clarity, and physical healing from a holistic perspective.</p>
+                            </details>
+                            <details class="service-detail-item">
+                                <summary>Focused Perception Training</summary>
+                                <p>Focused Perception Training (FPT) helps individuals enhance their ability to observe, concentrate, and interpret details accurately. It strengthens attention control and awareness, improving learning, decision-making, and emotional balance.</p>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TESTIMONIALS SECTION -->
+        <section class="scroll-section !min-h-[auto] py-20 md:py-32" id="testimonials">
+            <div class="content-container max-w-xl mx-auto md:max-w-5xl">
+                <h2 class="font-serif text-3xl md:text-4xl font-bold mb-4 reveal-element text-center">Testimonials</h2>
+                <p class="text-text-secondary text-lg mb-8 reveal-element delay-100 text-center">Real experiences from those who've walked this path.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="testimonial-card reveal-element delay-200">
+                        <p class="font-serif text-lg italic text-white mb-4 leading-relaxed">"I felt a deep calm within minutes. Gentle, powerful, and grounding."</p>
+                        <p class="font-bold text-var-brand-violet font-sans">— Aarav S.</p>
+                    </div>
+                    
+                    <div class="testimonial-card reveal-element delay-300">
+                        <p class="font-serif text-lg italic text-white mb-4 leading-relaxed">"This was a fundamental recalibration of my entire life. I didn't just find answers; I found a new way of being."</p>
+                        <p class="font-bold text-var-brand-violet font-sans">— Maya K.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABOUT SECTION (UPDATED FOR BRIEF/EXPANDABLE CONTENT) -->
+        <section class="scroll-section !min-h-[auto] py-20 md:py-32" id="about">
+            <div class="content-container max-w-xl mx-auto md:max-w-5xl">
+                <h2 class="font-serif text-3xl md:text-4xl font-bold mb-4 reveal-element text-center">Meet Our Dedicated Team</h2>
+                <p class="text-text-secondary text-lg mb-12 reveal-element delay-100 text-center">The Divine Planet is led by experienced spiritual practitioners committed to your holistic well-being and transformation.</p>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                    <!-- Smt. Aruna K - Founder (Brief Intro + Expandable Details) -->
+                    <div class="glass-card p-6 reveal-element delay-200">
+                        <h3 class="font-serif text-2xl font-bold text-var-accent-gold mb-2">Smt. Aruna K</h3>
+                        <p class="text-sm text-var-brand-violet font-semibold uppercase tracking-wider mb-4">Founder, Reiki Master & Spiritual Therapist</p>
+                        
+                        <!-- Collapsible Details Start -->
+                        <details class="team-member-details">
+                            <summary>Know More <i class="fas fa-chevron-down text-xs ml-2"></i></summary>
+                            <div class="space-y-4 pt-4 text-text-secondary">
+                                <!-- BRIEF DESCRIPTION (NOW INSIDE) -->
+                                <p class="mb-2">Smt. Aruna K is the founder of The Divine Planet, specializing in **Spiritual awakening, Reiki training, Past Life Regression therapy, Family, Child & Youth counselling** and **Personality Analysis**.</p>
+                                <p class="text-sm">She is a highly qualified Reiki Master (Level 4) and experienced healer working in the field for over **8 years**.</p>
+                                <!-- END BRIEF DESCRIPTION -->
+
+                                <h4 class="font-sans text-lg font-medium text-white mb-2 mt-4">Expertise & Qualifications:</h4>
+                                <ul class="list-disc list-inside space-y-2 text-sm ml-4">
+                                    <li>**M.Sc.** and **Diploma in Counselling** from Banjara academy.</li>
+                                    <li>Acharya Level Training from Mahadrashta Global University (Ananda Yogam - 3 levels).</li>
+                                    <li>Trained in **Past Life Regression Therapy** under Dr. Trupti Jayin.</li>
+                                    <li>4 level course in **Magnetic Acupressure Therapy and Naturopathy**.</li>
+                                    <li>Advanced **Yoga and Wellness** course.</li>
+                                    <li>Personality reading course (via a wrist-worn 'Watch device').</li>
+                                </ul>
+                                
+                                <h4 class="font-sans text-lg font-medium text-white mb-2 mt-4">Healing Focus:</h4>
+                                <p class="text-sm">She has successfully treated and trained hundreds of clients in **trauma healing, inner child healing, emotional counselling, and PLR therapy**. She also conducts deep energetic work including **Aura cleansing, Chakra scanning and cleansing, Entity releasing, Implants removal**, and providing **Protective Energy Shields** for residences.</p>
+                                
+                                <div class="mt-4 pt-4 border-t border-gray-800">
+                                    <p class="text-xs italic mb-2">Presented a successful healing treatment case study paper on PLR, published in National Conference on “Road map to VIKSIT BHARAT– A Multidisciplinary Approach - NCRVB -2025 in Vellore Institute of Technology, Chennai in July 2025.</p>
+                                    <p class="text-white font-bold text-sm">Available via prior appointment only. (Mobile: 812372100)</p>
+                                </div>
+                            </div>
+                        </details>
+                        <!-- Collapsible Details End -->
+                    </div>
+
+                    <!-- Ms. Anushree - Member (Brief Intro + Expandable Details) -->
+                    <div class="glass-card p-6 reveal-element delay-300">
+                        <h3 class="font-serif text-2xl font-bold text-var-accent-gold mb-2">Ms. Anushree</h3>
+                        <p class="text-sm text-var-brand-violet font-semibold uppercase tracking-wider mb-4">Licensed Counsellor & Regression Therapist</p>
+                        
+                        <!-- Collapsible Details Start -->
+                        <details class="team-member-details">
+                            <summary>Know More <i class="fas fa-chevron-down text-xs ml-2"></i></summary>
+                            <div class="space-y-4 pt-4 text-text-secondary">
+                                <!-- BRIEF DESCRIPTION (NOW INSIDE) -->
+                                <p class="mb-2">Ms. Anushree is a dedicated member, specializing in **Counselling, Hypnotherapy, Family Counselling, Regression Therapy**, and **CBT (Cognitive Behavioral Therapy)**. She is a licensed practitioner with an **M.Sc. in Psychology**.</p>
+                                <p class="text-sm">She brings expertise from academic instruction and school counselling to her holistic practice.</p>
+                                <!-- END BRIEF DESCRIPTION -->
+
+                                <h4 class="font-sans text-lg font-medium text-white mb-2 mt-4">Expertise & Qualifications:</h4>
+                                <ul class="list-disc list-inside space-y-2 text-sm ml-4">
+                                    <li>**M.Sc. Psychology** (Jain University), specialized in Counselling.</li>
+                                    <li>**B.Ed.** and licensed to practice counselling.</li>
+                                    <li>Completed certificate courses in Communicative English, Media programmes, Film Appreciation, and Entrepreneurship.</li>
+                                    <li>Trained at Spandana Rehabilitation Centre and Aruna Chetana Centre for Physically and mentally challenged students.</li>
+                                </ul>
+                                
+                                <h4 class="font-sans text-lg font-medium text-white mb-2 mt-4">Professional Experience:</h4>
+                                <p class="text-sm">She taught degree students at V.E.T. First Grade College for 2 years, achieving awards for best teaching, and was engaged in counselling the student community. She also worked as a counsellor at Carmel High School for 10 months.</p>
+                                
+                                <div class="mt-4 pt-4 border-t border-gray-800">
+                                    <p class="text-xs italic mb-2">Successfully presented papers on Art Therapy (October 2023) and jointly published research (National Conference, VIT Chennai, July 2025).</p>
+                                </div>
+                            </div>
+                        </details>
+                        <!-- Collapsible Details End -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEWSLETTER SECTION -->
+        <section class="scroll-section !min-h-[auto] py-20 md:py-32" id="newsletter">
+            <div class="content-container max-w-xl mx-auto md:max-w-5xl">
+                <h2 class="font-serif text-3xl md:text-4xl font-bold mb-4 reveal-element text-center">Newsletter</h2>
+                <div class="glass-card p-6 reveal-element delay-100 md:max-w-md mx-auto">
+                    <p class="text-text-secondary mb-4">Gentle insights, practices, and updates—delivered occasionally.</p>
+                    <input type="email" placeholder="Your email address" class="w-full p-3 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:outline-none mb-3 min-height: 44px">
+                    <button class="w-full bg-var-accent-gold text-black font-bold py-3 rounded-lg hover:bg-white transition-colors duration-300 mobile-btn">
+                        Subscribe
+                    </button>
+                    <p class="text-text-secondary text-xs mt-3">By subscribing, you agree to receive emails from The Divine Planet. You can unsubscribe anytime.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT SECTION -->
+        <section class="scroll-section !min-h-[auto] py-20 md:py-32" id="contact">
+            <div class="content-container max-w-xl mx-auto md:max-w-5xl">
+                <h2 class="font-serif text-3xl md:text-4xl font-bold mb-4 reveal-element text-center">Contact</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Main Contact Block -->
+                    <div class="glass-card p-6 reveal-element delay-100">
+                        <p class="text-text-secondary mb-4">Have a question or want guidance on which session to choose?</p>
+                        <p class="text-white font-bold mb-3">Phone / WhatsApp: +91 7892112327</p>
+                        <a href="https://wa.me/917892112327" target="_blank" class="bg-var-accent-gold text-black font-bold py-3 px-8 rounded-lg hover:bg-white transition-all duration-300 w-full inline-block text-center mobile-btn">
+                            Chat on WhatsApp
+                        </a>
+                    </div>
+
+                    <!-- Visit, Call, or Message Block -->
+                    <div class="glass-card p-6 reveal-element delay-200">
+                        <h3 class="font-serif text-xl md:text-2xl text-white mb-3">Visit, Call, or Message</h3>
+                        <p class="text-text-secondary mb-6">We respond swiftly on WhatsApp. For bookings, questions, or guidance, just say hello.</p>
+                        <!-- FIX: Removed the extraneous div and correctly formatted the iframe -->
+                        <div class="h-48 w-full rounded-lg overflow-hidden border border-gray-700">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d622.9605476317412!2d77.56706603474288!3d13.10699249937247!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTPCsDA2JzI1LjIiTiA3N8KwMzQnMDYuOCJF!5e0!3m2!1sen!2sin!4v1696600000000!5m2!1sen!2sin"
+                                width="100%" 
+                                height="100%" 
+                                style="border:0;" 
+                                allowfullscreen="" 
+                                loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade"
+                            ></iframe>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- Quick Contact Card -->
+                    <div class="glass-card p-6 reveal-element delay-300 md:col-span-2">
+                        <h4 class="font-sans text-sm uppercase tracking-widest text-text-secondary mb-3">Direct Contact</h4>
+                        <p class="text-text-secondary mb-3">Prefer WhatsApp? Tap the button to start a conversation right now.</p>
+                        <a href="https://wa.me/917892112327" target="_blank" class="bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition-colors duration-300 flex items-center justify-center mb-2 md:w-1/2 mx-auto mobile-btn">
+                            <i class="fab fa-whatsapp mr-2"></i> WhatsApp: +91 7892112327
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="bg-transparent py-10 px-5 border-t border-gray-900 reveal-element">
+            <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left text-sm text-text-secondary space-y-4 md:space-y-0">
+                <div class="flex justify-center space-x-4 flex-wrap">
+                    <a href="#home" class="hover:text-white transition-colors mobile-btn">Home</a>
+                    <a href="#about" class="hover:text-white transition-colors mobile-btn">Mission</a>
+                    <button id="footer-show-logo-page" class="hover:text-white transition-colors mobile-btn">Symbolism</button>
+                    <a href="#services" class="hover:text-white transition-colors mobile-btn">Services</a>
+                    <a href="#" class="hover:text-white transition-colors mobile-btn">Blog</a>
+                    <a href="#newsletter" class="hover:text-white transition-colors mobile-btn">Newsletter</a>
+                    <a href="#contact" class="hover:text-white transition-colors mobile-btn">Contact</a>
+                </div>
+                <div>
+                    Contact: Phone/WhatsApp +91 7892112327
+                </div>
+                <div>
+                    Copyright © The Divine Planet
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- CHAT BOT WIDGET -->
+    <div id="chat-widget" class="fixed bottom-6 right-6 z-[10000]">
+        <button id="chat-toggle" class="bg-var-brand-violet text-white p-4 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300">
+            <i class="fas fa-comment-dots text-xl"></i>
+        </button>
+
+        <!-- Initial style set to display:none to allow JS to control the transition -->
+        <div id="chat-window" class="absolute bottom-0 right-0 mb-16 glass-card flex-col p-4" style="display: none;">
+            <!-- Header -->
+            <div class="border-b border-gray-700 pb-3 mb-3">
+                <h4 class="font-serif text-xl font-bold text-white">Divine Guide</h4>
+                <p class="text-xs text-text-secondary">Instant answers to common questions.</p>
+            </div>
+            
+            <!-- Messages Container -->
+            <div id="chat-messages" class="flex-grow overflow-y-auto space-y-3 pr-2">
+                <div class="flex justify-start">
+                    <p class="bot-message-bubble">Welcome! I'm here to provide quick clarity. Please select a question below.</p>
+                </div>
+            </div>
+            
+            <!-- Menu/Input Area -->
+            <div id="chat-menu" class="pt-3 border-t border-gray-700 mt-auto">
+                <button data-question="choice" class="chat-menu-btn">How do I choose the right therapy?</button>
+                <button data-question="online" class="chat-menu-btn">Are all sessions conducted online?</button>
+                <button data-question="results" class="chat-menu-btn">How quickly will I see results?</button>
+                <button data-question="book" class="chat-menu-btn">How can I book a session?</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // THREE.js 3D ANIMATION LOGIC
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.querySelector('#bg-canvas');
+            let scene, camera, renderer, starParticles, clock, planets = [];
+            
+            const sections = document.querySelectorAll('.scroll-section');
+            
+            function initScene() {
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 20000);
+                clock = new THREE.Clock();
+                
+                renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.toneMapping = THREE.ACESFilmicToneMapping;
+                // renderer.outputEncoding = THREE.sRGBEncoding; // Removed sRGBEncoding as it may cause issues with default browser config
+
+                // Lights
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); 
+                scene.add(ambientLight);
+                
+                const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.5); 
+                scene.add(hemisphereLight);
+
+                // Stars 
+                const starGeometry = new THREE.BufferGeometry();
+                const starVertices = [];
+                const STAR_COUNT = 10000; 
+                for (let i = 0; i < STAR_COUNT; i++) {
+                    const x = (Math.random() - 0.5) * 8000;
+                    const y = (Math.random() - 0.5) * 8000;
+                    const z = (Math.random() - 0.5) * 8000;
+                    starVertices.push(x, y, z);
+                }
+                starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+                const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 1.5 });
+                starParticles = new THREE.Points(starGeometry, starMaterial);
+                scene.add(starParticles);
+
+                // Sun
+                const sunLight = new THREE.PointLight(0xffe8a3, 3.0, 5000); 
+                scene.add(sunLight);
+                const sunGeometry = new THREE.SphereGeometry(20, 64, 64);
+                const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffe8a3 });
+                const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+                scene.add(sun);
+
+                // Planet Data
+                const planetData = [
+                    { name: 'Earth', radius: 4, distance: 100, speed: 0.1, color: 0x225588, specular: 0x99aaff, shininess: 30 }, 
+                    { name: 'Jupiter', radius: 10, distance: 300, speed: 0.04, color: 0xcc9966, specular: 0xddccbb, shininess: 10 }, 
+                    { name: 'Saturn', radius: 8, distance: 500, speed: 0.03, color: 0xd8c29d, specular: 0xffffff, shininess: 20, hasRings: true }, 
+                    { name: 'Mars', radius: 3, distance: 180, speed: 0.08, color: 0x8a3324, specular: 0xffaa00, shininess: 15 } 
+                ];
+
+                planetData.forEach(data => {
+                    const planetGroup = new THREE.Group();
+                    const planetGeometry = new THREE.SphereGeometry(data.radius, 32, 32);
+                    
+                    const planetMaterial = new THREE.MeshPhongMaterial({ 
+                        color: data.color,
+                        specular: data.specular, 
+                        shininess: data.shininess 
+                    }); 
+                    
+                    const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+                    planetGroup.add(planet);
+                    
+                    if (data.hasRings) {
+                        const ringGeometry = new THREE.RingGeometry(data.radius * 1.5, data.radius * 2.5, 32);
+                        const ringMaterial = new THREE.MeshBasicMaterial({ 
+                            color: 0xaaaaaa, 
+                            side: THREE.DoubleSide, 
+                            transparent: true, 
+                            opacity: 0.5 
+                        });
+                        const rings = new THREE.Mesh(ringGeometry, ringMaterial);
+                        rings.rotation.x = Math.PI * 0.5;
+                        planetGroup.add(rings);
+                    }
+                    
+                    scene.add(planetGroup);
+                    planets.push({ group: planetGroup, distance: data.distance, speed: data.speed, planetMesh: planet });
+                });
+
+                window.addEventListener('resize', onWindowResize, false);
+            }
+            
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+
+            let screenplay;
+            function initAnimation() {
+                // Defines the camera path in space and what it looks at
+                screenplay = [
+                    { t: 0, pos: new THREE.Vector3(0, 30, 250), look: new THREE.Vector3(0, 0, 0) }, 
+                    { t: 10, pos: new THREE.Vector3(-150, 10, 150), look: planets[1].group.position },
+                    { t: 20, pos: new THREE.Vector3(0, 50, 0), look: new THREE.Vector3(0, 0, 0) }, 
+                    { t: 30, pos: new THREE.Vector3(120, -5, 120), look: planets[3].group.position }, 
+                    { t: 40, pos: new THREE.Vector3(50, 20, -50), look: planets[0].group.position }, 
+                    { t: 50, pos: new THREE.Vector3(0, 30, 250), look: new THREE.Vector3(0, 0, 0) } 
+                ];
+                animate();
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+                const elapsedTime = clock.getElapsedTime();
+
+                // Rotate and orbit planets
+                planets.forEach(p => {
+                    const angle = elapsedTime * p.speed;
+                    p.group.position.x = Math.cos(angle) * p.distance;
+                    p.group.position.z = Math.sin(angle) * p.distance;
+                    p.planetMesh.rotation.y += 0.002;
+                });
+
+                // Camera Path Interpolation
+                const maxTime = screenplay[screenplay.length-1].t;
+                const loopTime = elapsedTime % maxTime;
+                let currentKeyframe = 0;
+                for(let i = 0; i < screenplay.length - 1; i++){
+                    if(loopTime >= screenplay[i].t && loopTime < screenplay[i+1].t){ currentKeyframe = i; break; }
+                }
+                
+                const start = screenplay[currentKeyframe];
+                const end = screenplay[currentKeyframe + 1];
+                const duration = end.t - start.t;
+                const progress = (loopTime - start.t) / duration;
+                
+                // Use smooth step for smoother transition (ease-in-out)
+                const smoothProgress = progress * progress * (3 - 2 * progress);
+                
+                // Lerp (linear interpolate) camera position and look target
+                camera.position.lerpVectors(start.pos, end.pos, smoothProgress);
+                const lookAtTarget = new THREE.Vector3().lerpVectors(start.look, end.look, smoothProgress);
+                camera.lookAt(lookAtTarget);
+
+                renderer.render(scene, camera);
+            }
+
+            // UI LOGIC
+            const header = document.querySelector('header');
+            
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.scrollY || document.documentElement.scrollTop;
+                if (scrollTop > 50) header.classList.add('scrolled');
+                else header.classList.remove('scrolled');
+            });
+            
+            // Intersection Observer for scroll reveal animation
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, { threshold: 0.1, root: null });
+
+            sections.forEach(section => observer.observe(section));
+
+            // Start 3D animation
+            initScene();
+            initAnimation(); 
+            
+            // LOGO PAGE NAVIGATION
+            const showLogoButton = document.getElementById('show-logo-page');
+            const headerLogo = document.getElementById('header-logo');
+            const footerShowLogoButton = document.getElementById('footer-show-logo-page');
+            const backToHomeButton = document.getElementById('back-to-home');
+            const logoPage = document.getElementById('logo-page');
+            
+            const showLogoPage = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                document.body.style.overflowY = 'hidden'; 
+                logoPage.style.display = 'block';
+                setTimeout(() => {
+                    logoPage.style.opacity = '1';
+                }, 10);
+                logoPage.scrollTop = 0;
+            };
+
+            const hideLogoPage = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                logoPage.style.opacity = '0';
+                setTimeout(() => {
+                    logoPage.style.display = 'none';
+                    document.body.style.overflowY = 'auto';
+                }, 300); // Match transition duration
+            };
+            
+            if (showLogoButton) showLogoButton.addEventListener('click', showLogoPage);
+            if (headerLogo) headerLogo.addEventListener('click', showLogoPage);
+            if (footerShowLogoButton) footerShowLogoButton.addEventListener('click', showLogoPage);
+            if (backToHomeButton) backToHomeButton.addEventListener('click', hideLogoPage);
+
+        });
+
+        // ENHANCED CHATBOT LOGIC
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatToggle = document.getElementById('chat-toggle');
+            const chatWindow = document.getElementById('chat-window');
+            const chatMessages = document.getElementById('chat-messages');
+            const chatMenu = document.getElementById('chat-menu');
+            
+            const predefinedAnswers = {
+                choice: "We recommend reviewing the detailed descriptions under the **Services** section. If you are still unsure, our experts offer a **free initial consultation** via WhatsApp to assess your needs.",
+                online: "Yes, all our spiritual and energy therapies (Reiki, Akashic Records, Divination) are conducted **online via video call**. This allows us to serve clients globally in the comfort of their home.",
+                results: "Varies by individual. While many clients report feeling **immediate calm and clarity** after the first session, deep transformation requires consistency. We focus on long-term well-being.",
+                book: "The simplest way is to tap the **Chat on WhatsApp** button. Send us a message detailing the service you are interested in, and we will guide you through scheduling and payment."
+            };
+
+            // FIX: Refactored chat toggle to enable CSS transitions
+            const toggleChat = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const isOpen = chatWindow.classList.contains('open');
+                if (!isOpen) {
+                    // Open: Set display to flex immediately, then add 'open' class for transition
+                    chatWindow.style.display = 'flex';
+                    // Use rAF/setTimeout for next frame transition trigger
+                    requestAnimationFrame(() => {
+                        chatWindow.classList.add('open');
+                    });
+                } else {
+                    // Close: Remove 'open' class for transition, then set display to none after transition finishes
+                    chatWindow.classList.remove('open');
+                    setTimeout(() => {
+                        chatWindow.style.display = 'none';
+                    }, 300); // Match transition duration (0.3s)
+                }
+            };
+
+            if (chatToggle) {
+                chatToggle.addEventListener('click', toggleChat);
+            }
+
+            function addBotMessage(text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'flex justify-start';
+                messageDiv.innerHTML = `<p class="bot-message-bubble">${text}</p>`;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            function addUserQuestion(text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'flex justify-end';
+                messageDiv.innerHTML = `<p class="user-question-bubble">${text}</p>`;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // Menu button handling
+            if (chatMenu) {
+                chatMenu.querySelectorAll('.chat-menu-btn').forEach(button => {
+                    const handleClick = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const questionKey = e.target.getAttribute('data-question');
+                        const questionText = e.target.textContent;
+                        
+                        addUserQuestion(questionText);
+                        
+                        const answer = predefinedAnswers[questionKey];
+                        
+                        // Simulate bot response delay
+                        setTimeout(() => {
+                            addBotMessage(answer);
+                            
+                            setTimeout(() => {
+                                addBotMessage("Do you have another question, or are you ready to chat on WhatsApp?");
+                            }, 1000);
+                            
+                        }, 500); 
+                    };
+                    
+                    button.addEventListener('click', handleClick);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
